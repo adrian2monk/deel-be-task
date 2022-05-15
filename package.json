@@ -19,6 +19,9 @@
     "nodemon": "1.19.1",
     "supertest": "^6.2.3"
   },
+  "standard": {
+    "env": [ "jest" ]
+  },
   "engines": {
     "node": ">=10.16.3"
   },
