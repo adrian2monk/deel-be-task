@@ -15,6 +15,8 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
   const { id } = req.params
   const contract = await Contract.findOne({ where: { id } })
   if (!contract) return res.status(404).end()
+  const contractor = await contract.getContractor()
+  if (contractor.id !== req.profile.id) return res.status(403).end()
   res.json(contract)
 })
 module.exports = app
