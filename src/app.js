@@ -16,7 +16,7 @@ app.use(function (ex, req, res, next) {
   res.status(code)
   res.json({
     api: req.path,
-    error: ex.message,
+    error: code !== 500 ? ex.message : 'Something wired happening',
     status: status[code] || code
   })
   next()

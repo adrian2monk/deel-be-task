@@ -82,6 +82,11 @@ Job.init(
         where: {
           paid: { [Sequelize.Op.not]: true }
         }
+      },
+      paid: {
+        where: {
+          paid: true
+        }
       }
     }
   }
@@ -93,6 +98,7 @@ Profile.hasMany(Contract, { as: 'Client', foreignKey: 'ClientId' })
 Contract.belongsTo(Profile, { as: 'Client' })
 Contract.hasMany(Job)
 Contract.hasMany(Job.scope('unpaid'), { as: 'UnpaidJobs' })
+Contract.hasMany(Job.scope('paid'), { as: 'PaidJobs' })
 Job.belongsTo(Contract)
 
 module.exports = {
