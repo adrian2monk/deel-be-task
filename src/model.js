@@ -46,7 +46,12 @@ Contract.init(
   },
   {
     sequelize,
-    modelName: 'Contract'
+    modelName: 'Contract',
+    defaultScope: {
+      where: {
+        status: { [Sequelize.Op.ne]: 'terminated' }
+      }
+    }
   }
 )
 
@@ -71,7 +76,14 @@ Job.init(
   },
   {
     sequelize,
-    modelName: 'Job'
+    modelName: 'Job',
+    scopes: {
+      unpaid: {
+        where: {
+          paid: { [Sequelize.Op.not]: true }
+        }
+      }
+    }
   }
 )
 
@@ -80,6 +92,7 @@ Contract.belongsTo(Profile, { as: 'Contractor' })
 Profile.hasMany(Contract, { as: 'Client', foreignKey: 'ClientId' })
 Contract.belongsTo(Profile, { as: 'Client' })
 Contract.hasMany(Job)
+Contract.hasMany(Job.scope('unpaid'), { as: 'UnpaidJobs' })
 Job.belongsTo(Contract)
 
 module.exports = {
