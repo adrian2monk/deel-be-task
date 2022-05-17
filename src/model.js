@@ -56,9 +56,11 @@ Contract.init(
   {
     sequelize,
     modelName: 'Contract',
-    defaultScope: {
-      where: {
-        status: 'in_progress'
+    scopes: {
+      active: {
+        where: {
+          status: 'in_progress'
+        }
       }
     }
   }
@@ -108,7 +110,7 @@ Contract.belongsTo(Profile, { as: 'Client' })
 Contract.hasMany(Job)
 Contract.hasMany(Job.scope('unpaid'), { as: 'UnpaidJobs' })
 Contract.hasMany(Job.scope('paid'), { as: 'PaidJobs' })
-Job.belongsTo(Contract.unscoped())
+Job.belongsTo(Contract)
 
 module.exports = {
   sequelize,

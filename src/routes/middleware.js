@@ -1,24 +1,20 @@
 const isInvalidDate = dt => !Date.parse(dt)
 
 class InvalidDateError extends Error {
-  constructor (msg, status) {
-    super(msg)
-    this.status = status
+  constructor ({ start, end, msg }) {
+    const val = start || end || null
+    const key = (start && 'start') || (end && 'end') || 'date'
+    super(msg || `Invalid query param '${key}=${val}' date format. Try this one 2020-01-31`)
+    this.status = 400
   }
-}
-
-const InvalidDate = ({ start, end, msg }, status = 400) => {
-  const val = start || end || null
-  const key = (start && 'start') || (end && 'end') || 'date'
-  return new InvalidDateError(msg || `Invalid query param '${key}=${val}' date format. Try this one 2020-01-31`, status)
 }
 
 const getDateRange = async (req, res, next) => {
   const { start, end } = req.query
-  if (!start) return next(InvalidDate({ msg: 'Query param `start` required' }))
-  if (isInvalidDate(start)) return next(InvalidDate({ start }))
-  if (!end) return next(InvalidDate({ msg: 'Query param `end` required' }))
-  if (isInvalidDate(end)) return next(InvalidDate({ end }))
+  if (!start) return next(new InvalidDateError({ msg: 'Query param `start` required' }))
+  if (isInvalidDate(start)) return next(new InvalidDateError({ start }))
+  if (!end) return next(new InvalidDateError({ msg: 'Query param `end` required' }))
+  if (isInvalidDate(end)) return next(new InvalidDateError({ end }))
   req.start = new Date(start)
   req.end = new Date(end)
   next()

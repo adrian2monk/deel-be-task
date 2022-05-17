@@ -13,7 +13,7 @@ class NotEnoughBalanceError extends Error {
  */
 router.get('/unpaid', getProfile, async (req, res) => {
   const { Contract } = req.app.get('models')
-  const contracts = await Contract.findAll({
+  const contracts = await Contract.scope('active').findAll({
     attributes: ['id'],
     where: req.belongsTo,
     include: {
@@ -49,7 +49,7 @@ router.post('/:job_id/pay', getProfile, async (req, res, next) => {
     await client.save({ transaction })
     await job.save({ transaction })
     await transaction.commit()
-    res.json()
+    res.sendStatus(200)
   } catch (ex) {
     console.error(ex)
     await transaction.rollback()

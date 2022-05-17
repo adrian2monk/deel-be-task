@@ -19,7 +19,7 @@ router.get('/best-profession', getDateRange, async (req, res) => {
     include: {
       required: true,
       as: 'Contractor',
-      model: Contract.unscoped(),
+      model: Contract,
       where: {
         createdAt: {
           [Op.between]: [req.start, req.end]
