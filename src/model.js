@@ -58,7 +58,7 @@ Contract.init(
     modelName: 'Contract',
     defaultScope: {
       where: {
-        status: { [Sequelize.Op.ne]: 'terminated' }
+        status: 'in_progress'
       }
     }
   }
