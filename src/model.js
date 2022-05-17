@@ -16,6 +16,15 @@ Profile.init(
       type: Sequelize.STRING,
       allowNull: false
     },
+    fullName: {
+      type: Sequelize.VIRTUAL,
+      get () {
+        return `${this.firstName} ${this.lastName}`
+      },
+      set (value) {
+        throw new Error('Do not try to set the `fullName` value!')
+      }
+    },
     profession: {
       type: Sequelize.STRING,
       allowNull: false

@@ -46,7 +46,11 @@ router.get('/jobs/unpaid', getProfile, async (req, res) => {
   const contracts = await Contract.findAll({
     attributes: ['id'],
     where: belongsTo(req.profile),
-    include: { association: 'UnpaidJobs', required: true }
+    include: {
+      required: true,
+      association: 'UnpaidJobs',
+      attributes: ['id', 'description', 'paymentDate', 'price', 'paid']
+    }
   })
   res.json(contracts.map(c => c.UnpaidJobs).flat())
 })

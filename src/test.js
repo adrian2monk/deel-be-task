@@ -15,8 +15,15 @@ test('get /contracts/:id owner user', async () => {
 
 test('get /contracts by contractor user', async () => {
   const res = await request(app).get('/contracts').set('profile_id', 6)
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    terms: expect.any(String),
+    status: expect.any(String),
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String)
+  })
   expect(res.statusCode).toBe(200)
-  expect(res.body.map(({ id }) => id)).toEqual(expect.arrayContaining([2, 3, 8]))
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected, expected]))
 })
 
 test('get /contracts by contractor user with terminated contracts', async () => {
@@ -27,8 +34,15 @@ test('get /contracts by contractor user with terminated contracts', async () => 
 
 test('get /contracts by client user', async () => {
   const res = await request(app).get('/contracts').set('profile_id', 2)
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    terms: expect.any(String),
+    status: expect.any(String),
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String)
+  })
   expect(res.statusCode).toBe(200)
-  expect(res.body.map(({ id }) => id)).toEqual(expect.arrayContaining([3, 4]))
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected]))
 })
 
 test('get /contracts by wrong user', async () => {
@@ -38,14 +52,28 @@ test('get /contracts by wrong user', async () => {
 
 test('get /jobs/unpaid by client user', async () => {
   const res = await request(app).get('/jobs/unpaid').set('profile_id', 2)
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    price: expect.any(Number),
+    description: expect.any(String),
+    paymentDate: null,
+    paid: null
+  })
   expect(res.statusCode).toBe(200)
-  expect(res.body.map(({ ContractId: id }) => id)).toEqual(expect.arrayContaining([3, 4]))
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected]))
 })
 
 test('get /jobs/unpaid by contractor user', async () => {
   const res = await request(app).get('/jobs/unpaid').set('profile_id', 6)
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    price: expect.any(Number),
+    description: expect.any(String),
+    paymentDate: null,
+    paid: null
+  })
   expect(res.statusCode).toBe(200)
-  expect(res.body.map(({ ContractId: id }) => id)).toEqual(expect.arrayContaining([2, 3]))
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected]))
 })
 
 test('get /admin/best-profession without required start date', async () => {
@@ -81,4 +109,32 @@ test('get /admin/best-profession', async () => {
 test('get /admin/best-profession no content', async () => {
   const res = await request(app).get('/admin/best-profession').query({ start: '2020-01-01', end: '2020-12-31' })
   expect(res.statusCode).toBe(204)
+})
+
+test('get /admin/best-clients without limit', async () => {
+  const res = await request(app).get('/admin/best-clients').query({ start: '2020-01-01', end: '2022-12-31' })
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    paid: expect.any(Number),
+    fullName: expect.any(String)
+  })
+  expect(res.statusCode).toBe(200)
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected]))
+})
+
+test('get /admin/best-clients with expected response attrs', async () => {
+  const res = await request(app).get('/admin/best-clients').query({ start: '2020-01-01', end: '2022-12-31', limit: 3 })
+  const expected = expect.objectContaining({
+    id: expect.any(Number),
+    paid: expect.any(Number),
+    fullName: expect.any(String)
+  })
+  expect(res.statusCode).toBe(200)
+  expect(res.body).toEqual(expect.arrayContaining([expected, expected, expected]))
+})
+
+test('get /admin/best-clients no content', async () => {
+  const res = await request(app).get('/admin/best-clients').query({ start: '2020-01-01', end: '2020-12-31' })
+  expect(res.statusCode).toBe(200)
+  expect(res.body.length).toBe(0)
 })
