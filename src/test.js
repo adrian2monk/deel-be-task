@@ -3,13 +3,18 @@ const request = require('supertest')
 
 /** All this tests run with the initial seed if you're updated the database please reset all before run it */
 
-test('get /contracts/:id wrong user', async () => {
+test('get /contracts/:id with wrong owner user', async () => {
   const res = await request(app).get(`/contracts/${1}`).set('profile_id', 2)
   expect(res.statusCode).toBe(403)
 })
 
-test('get /contracts/:id owner user', async () => {
+test('get /contracts/:id with contractor user', async () => {
   const res = await request(app).get(`/contracts/${1}`).set('profile_id', 5)
+  expect(res.statusCode).toBe(200)
+})
+
+test('get /contracts/:id with client user', async () => {
+  const res = await request(app).get(`/contracts/${1}`).set('profile_id', 1)
   expect(res.statusCode).toBe(200)
 })
 

@@ -1,5 +1,5 @@
-const { QueryTypes, Op } = require('sequelize')
 const router = require('express').Router()
+const { QueryTypes, Op } = require('sequelize')
 const { getDateRange } = require('./middleware')
 
 /**
@@ -7,7 +7,7 @@ const { getDateRange } = require('./middleware')
  * @param {Date} req.end date range
  * @returns {string} best profession in a time range provided
  */
-router.get('/best-profession', getDateRange, async (req, res, next) => {
+router.get('/best-profession', getDateRange, async (req, res) => {
   const { Profile, Contract } = req.app.get('models')
   const sequelize = req.app.get('sequelize')
   // This is the best fit for now, but may be you need to switch to a raw query if you wanna use a limit 1 for a large amount of professions
@@ -41,7 +41,7 @@ router.get('/best-profession', getDateRange, async (req, res, next) => {
  * @param {integer} req.limit default 2
  * @returns {string} a list of top clients sorted by higher payer
  */
-router.get('/best-clients', getDateRange, async (req, res, next) => {
+router.get('/best-clients', getDateRange, async (req, res) => {
   const { limit = 2 } = req.query
   const { Profile } = req.app.get('models')
   const sequelize = req.app.get('sequelize')

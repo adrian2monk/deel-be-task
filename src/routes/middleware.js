@@ -25,15 +25,15 @@ const getDateRange = async (req, res, next) => {
 }
 
 const getProfile = async (req, res, next) => {
-  try {
-    const { Profile } = req.app.get('models')
-    const profile = await Profile.findOne({ where: { id: req.get('profile_id') || 0 } })
-    if (!profile) return res.status(401).end()
-    req.profile = profile
-    next()
-  } catch (ex) {
-    next(ex)
-  }
+  const { Profile } = req.app.get('models')
+  // Improvement: Keep all the roles in one place to tracking all changes in Profile model type enum
+  // Just prevent to show you all when some new role gets added and this method get not updated
+  const belongsTo = ({ id, type }) => ({ client: { ClientId: id }, contractor: { ContractorId: id } })[type] || { clientId: 0 }
+  const profile = await Profile.findOne({ where: { id: req.get('profile_id') || 0 } })
+  if (!profile) return res.status(401).end()
+  req.profile = profile
+  req.belongsTo = belongsTo(profile)
+  next()
 }
 
 module.exports = {
